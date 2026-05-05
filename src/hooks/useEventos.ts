@@ -8,6 +8,7 @@ type Evento = {
   fecha: string
   precio: number
   tipo: string
+  imagen: string | null  
 }
 
 function useEventos() {
@@ -18,16 +19,29 @@ function useEventos() {
     if (data) setEventos(data)
   }
 
-  const insertar = async (nombre: string, lugar: string, fecha: string, precio: number, tipo: string) => {
-    const { error } = await supabase.from("eventos").insert([{ nombre, lugar, fecha, precio, tipo }])
-    if (!error) traer()
-  }
+  const subirImagen = async (archivo: File) => {
+  const nombreArchivo = `${Date.now()}_${archivo.name}`
+  const { error } = await supabase.storage
+    .from("eventos-imagenes")
+    .upload(nombreArchivo, archivo)
 
-  const actualizar = async (id: number, nombre: string, lugar: string, fecha: string, precio: number, tipo: string) => {
-    const { error } = await supabase.from("eventos").update({ nombre, lugar, fecha, precio, tipo }).eq("id", id)
-    if (!error) traer()
-  }
+  if (error) return null
 
+  const { data } = supabase.storage
+    .from("eventos-imagenes")
+    .getPublicUrl(nombreArchivo)
+
+  return data.publicUrl
+}
+const insertar = async (nombre: string, lugar: string, fecha: string, precio: number, tipo: string, imagen: string | null) => {
+  const { error } = await supabase.from("eventos").insert([{ nombre, lugar, fecha, precio, tipo, imagen }])
+  if (!error) traer()
+}
+
+const actualizar = async (id: number, nombre: string, lugar: string, fecha: string, precio: number, tipo: string, imagen: string | null) => {
+  const { error } = await supabase.from("eventos").update({ nombre, lugar, fecha, precio, tipo, imagen }).eq("id", id)
+  if (!error) traer()
+}
   const eliminar = async (id: number) => {
     const { error } = await supabase.from("eventos").delete().eq("id", id)
     if (!error) traer()
@@ -50,6 +64,7 @@ function useEventos() {
     insertar,
     actualizar,
     eliminar,
+    subirImagen,
   }
 }
 

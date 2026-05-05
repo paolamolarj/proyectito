@@ -3,7 +3,7 @@ import { Formulario, EventoCard } from "./components"
 import { useEventos } from "./hooks"
 
 function App() {
-const { eventos, contadorFuturos, insertar, actualizar, eliminar } = useEventos()
+const { eventos, contadorFuturos, insertar, actualizar, eliminar, subirImagen } = useEventos()
   const [eventoEditar, setEventoEditar] = useState(null)
   const [filtroTipo, setFiltroTipo] = useState("todos")
   const [filtroTemporal, setFiltroTemporal] = useState("todos")
@@ -26,11 +26,12 @@ const { eventos, contadorFuturos, insertar, actualizar, eliminar } = useEventos(
 
       {/* Formulario */}
       <Formulario
-        insertar={insertar}
-        actualizar={actualizar}
-        eventoEditar={eventoEditar}
-        setEventoEditar={setEventoEditar}
-      />
+  insertar={insertar}
+  actualizar={actualizar}
+  eventoEditar={eventoEditar}
+  setEventoEditar={setEventoEditar}
+  subirImagen={subirImagen}  // 👈 esto faltaba
+/>
 
       {/* Filtros */}
       <div className="filtros">
@@ -53,11 +54,11 @@ const { eventos, contadorFuturos, insertar, actualizar, eliminar } = useEventos(
       <div className="lista">
         {eventosFiltrados.map((evento) => (
           <EventoCard
-            key={evento.id}
-            {...evento}
-            setEventoEditar={setEventoEditar}
-            eliminar={eliminar}
-          />
+  key={evento.id}
+  {...evento}
+  setEventoEditar={setEventoEditar}
+  eliminar={eliminar}
+/>
         ))}
       </div>
     </div>

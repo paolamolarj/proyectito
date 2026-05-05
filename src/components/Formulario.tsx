@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react"
 
 type Props = {
-  insertar: (nombre: string, lugar: string, fecha: string, precio: number, tipo: string) => void
-  actualizar: (id: number, nombre: string, lugar: string, fecha: string, precio: number, tipo: string) => void
+  insertar: (nombre: string, lugar: string, fecha: string, precio: number, tipo: string, imagen: string | null) => void
+  actualizar: (id: number, nombre: string, lugar: string, fecha: string, precio: number, tipo: string, imagen: string | null) => void
   eventoEditar: any
   setEventoEditar: (e: any) => void
+  subirImagen: (archivo: File) => Promise<string | null>
 }
 
-function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar }: Props) {
+function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar, subirImagen }: Props) {
+  // 👆 subirImagen aquí
   const [nombre, setNombre] = useState('')
   const [lugar, setLugar] = useState('')
   const [fecha, setFecha] = useState('')
   const [precio, setPrecio] = useState(0)
   const [tipo, setTipo] = useState('concierto')
+  const [archivoImagen, setArchivoImagen] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
 
-  // Si hay un evento a editar, carga sus datos en el form
   useEffect(() => {
     if (eventoEditar) {
       setNombre(eventoEditar.nombre)
@@ -22,6 +25,7 @@ function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar }: Pro
       setFecha(eventoEditar.fecha)
       setPrecio(eventoEditar.precio)
       setTipo(eventoEditar.tipo)
+      setPreview(eventoEditar.imagen || null)
     }
   }, [eventoEditar])
 
@@ -32,14 +36,28 @@ function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar }: Pro
     setPrecio(0)
     setTipo('concierto')
     setEventoEditar(null)
+    setArchivoImagen(null)
+    setPreview(null)
   }
 
-  const manejarSubmit = (e: React.FormEvent) => {
+  const manejarArchivo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    setArchivoImagen(file)
+    if (file) setPreview(URL.createObjectURL(file))
+  }
+
+  const manejarSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    let urlImagen = eventoEditar?.imagen || null
+
+    if (archivoImagen) {
+      urlImagen = await subirImagen(archivoImagen)
+    }
+
     if (eventoEditar) {
-      actualizar(eventoEditar.id, nombre, lugar, fecha, precio, tipo)
+      actualizar(eventoEditar.id, nombre, lugar, fecha, precio, tipo, urlImagen)
     } else {
-      insertar(nombre, lugar, fecha, precio, tipo)
+      insertar(nombre, lugar, fecha, precio, tipo, urlImagen)
     }
     limpiar()
   }
@@ -78,6 +96,10 @@ function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar }: Pro
         <option value="festival">Festival</option>
         <option value="show">Show</option>
       </select>
+      {preview && (
+        <img src={preview} alt="preview" style={{ width: "100px", borderRadius: "8px" }} />
+      )}
+      <input type="file" accept="image/*" onChange={manejarArchivo} />
       <button type="submit">{eventoEditar ? "Actualizar" : "Guardar"}</button>
       {eventoEditar && (
         <button type="button" onClick={limpiar}>Cancelar</button>
