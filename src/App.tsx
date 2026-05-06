@@ -8,7 +8,6 @@ const { eventos, contadorFuturos, insertar, actualizar, eliminar, subirImagen } 
   const [filtroTipo, setFiltroTipo] = useState("todos")
   const [filtroTemporal, setFiltroTemporal] = useState("todos")
 
-  // 🧠 Aplica filtros
   const eventosFiltrados = eventos
     .filter(e => filtroTipo === "todos" || e.tipo === filtroTipo)
     .filter(e => {
@@ -20,8 +19,8 @@ const { eventos, contadorFuturos, insertar, actualizar, eliminar, subirImagen } 
   return (
     <div>
       {/* Contador */}
-      <h1>🎵 Sistema de Eventos</h1>
-      <p className="contador">📅 Próximos eventos: <strong>{contadorFuturos}</strong></p>
+      <h1>Sistema de Eventos</h1>
+      <p className="contador">Próximos eventos: <strong>{contadorFuturos}</strong></p>
 
 
       {/* Formulario */}

@@ -9,7 +9,6 @@ type Props = {
 }
 
 function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar, subirImagen }: Props) {
-  // 👆 subirImagen aquí
   const [nombre, setNombre] = useState('')
   const [lugar, setLugar] = useState('')
   const [fecha, setFecha] = useState('')
