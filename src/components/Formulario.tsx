@@ -19,22 +19,18 @@ function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar, subir
 const formRef = useRef<HTMLFormElement>(null)
 
 useEffect(() => {
-  if (eventoEditar && formRef.current) {
-    formRef.current.scrollIntoView({ behavior: 'smooth' }) // 👈 sube al form
-  }
-}, [eventoEditar])
-
-useEffect(() => {
   if (eventoEditar) {
     setNombre(eventoEditar.nombre)
     setLugar(eventoEditar.lugar)
     setFecha(eventoEditar.fecha)
     setPrecio(eventoEditar.precio)
     setTipo(eventoEditar.tipo)
-    setPreview(eventoEditar.imagen || null) 
-    setArchivoImagen(null) 
+    setPreview(eventoEditar.imagen || null)
+    setArchivoImagen(null)
+    formRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 }, [eventoEditar])
+
 
 
   const limpiar = () => {
