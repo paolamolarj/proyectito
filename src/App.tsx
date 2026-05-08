@@ -29,7 +29,7 @@ const { eventos, contadorFuturos, insertar, actualizar, eliminar, subirImagen } 
   actualizar={actualizar}
   eventoEditar={eventoEditar}
   setEventoEditar={setEventoEditar}
-  subirImagen={subirImagen}  // 👈 esto faltaba
+  subirImagen={subirImagen}  
 />
 
       {/* Filtros */}
