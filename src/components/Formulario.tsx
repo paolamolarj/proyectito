@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 type Props = {
   insertar: (nombre: string, lugar: string, fecha: string, precio: number, tipo: string, imagen: string | null) => void
@@ -16,17 +16,26 @@ function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar, subir
   const [tipo, setTipo] = useState('concierto')
   const [archivoImagen, setArchivoImagen] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
+const formRef = useRef<HTMLFormElement>(null)
 
-  useEffect(() => {
-    if (eventoEditar) {
-      setNombre(eventoEditar.nombre)
-      setLugar(eventoEditar.lugar)
-      setFecha(eventoEditar.fecha)
-      setPrecio(eventoEditar.precio)
-      setTipo(eventoEditar.tipo)
-      setPreview(eventoEditar.imagen || null)
-    }
-  }, [eventoEditar])
+useEffect(() => {
+  if (eventoEditar && formRef.current) {
+    formRef.current.scrollIntoView({ behavior: 'smooth' }) // 👈 sube al form
+  }
+}, [eventoEditar])
+
+useEffect(() => {
+  if (eventoEditar) {
+    setNombre(eventoEditar.nombre)
+    setLugar(eventoEditar.lugar)
+    setFecha(eventoEditar.fecha)
+    setPrecio(eventoEditar.precio)
+    setTipo(eventoEditar.tipo)
+    setPreview(eventoEditar.imagen || null) 
+    setArchivoImagen(null) 
+  }
+}, [eventoEditar])
+
 
   const limpiar = () => {
     setNombre('')
@@ -45,24 +54,25 @@ function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar, subir
     if (file) setPreview(URL.createObjectURL(file))
   }
 
-  const manejarSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    let urlImagen = eventoEditar?.imagen || null
+const manejarSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  let urlImagen = eventoEditar?.imagen || null 
 
-    if (archivoImagen) {
-      urlImagen = await subirImagen(archivoImagen)
-    }
-
-    if (eventoEditar) {
-      actualizar(eventoEditar.id, nombre, lugar, fecha, precio, tipo, urlImagen)
-    } else {
-      insertar(nombre, lugar, fecha, precio, tipo, urlImagen)
-    }
-    limpiar()
+  if (archivoImagen) {
+    urlImagen = await subirImagen(archivoImagen) // solo reemplaza si sube nueva
   }
 
+  if (eventoEditar) {
+    actualizar(eventoEditar.id, nombre, lugar, fecha, precio, tipo, urlImagen)
+  } else {
+    insertar(nombre, lugar, fecha, precio, tipo, urlImagen)
+  }
+  limpiar()
+}
+
   return (
-    <form onSubmit={manejarSubmit}>
+    <form ref={formRef} onSubmit={manejarSubmit}>
+
       <input
         type="text"
         placeholder="Nombre del evento"
@@ -103,6 +113,7 @@ function Formulario({ insertar, actualizar, eventoEditar, setEventoEditar, subir
       {eventoEditar && (
         <button type="button" onClick={limpiar}>Cancelar</button>
       )}
+      
     </form>
   )
 }

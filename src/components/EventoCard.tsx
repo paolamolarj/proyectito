@@ -3,7 +3,7 @@ type Props = {
   nombre: string
   lugar: string
   fecha: string
-  precio: number
+  precio: string
   tipo: string
   setEventoEditar: (evento: any) => void
   eliminar: (id: number) => void
@@ -27,7 +27,7 @@ function EventoCard({ id, nombre, imagen, lugar, fecha, precio, tipo, setEventoE
       <h3>{nombre}</h3>
       <p>📍 {lugar}</p>
       <p>📅 {fecha}</p>
-      <p>💰 {precio === 0 ? "Gratuito" : `$${precio}`}</p>
+      <p>💰 {Number(precio) === 0 ? "Gratuito" : `$${Number(precio).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })}`}</p>
       <div className="acciones">
         <button onClick={() => setEventoEditar({ id, nombre, lugar, fecha, precio, tipo })}>
           Editar
